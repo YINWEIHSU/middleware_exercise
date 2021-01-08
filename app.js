@@ -5,26 +5,52 @@ const port = 3000
 
 app.use(function (req, res, next) {
 
+  console.log('middleware 1 start')
   const reqTime = new Date()
+
+  setTimeout(() => {
+    next()
+  }, 1500)
+
+  // next()
 
   res.on('finish', () => {
     const resTime = new Date()
     let totalTime = resTime - reqTime
 
-    console.log(`Request time: ${reqTime.toLocaleString()}`)
-    console.log(`Response time: ${resTime.toLocaleString()}`)
+    console.log('--1--')
     console.log(`${reqTime.toLocaleString()} | ${req.method} from ${req.url} | total time: ${totalTime}ms`)
-    console.log('---')
+    console.log('--1--')
+    console.log('middleware 1 end')
   })
 
   res.on('error', () => {
     console.error(error)
   })
-
-  setTimeout(() => {
-    next()
-  }, 5000)
 })
+
+app.use(function (req, res, next) {
+
+  console.log('middleware 2 start')
+  const reqTime = new Date()
+
+  next()
+
+  res.on('finish', () => {
+    const resTime = new Date()
+    let totalTime = resTime - reqTime
+
+    console.log('--2--')
+    console.log(`${reqTime.toLocaleString()} | ${req.method} from ${req.url} | total time: ${totalTime}ms`)
+    console.log('--2--')
+    console.log('middleware 2 end')
+  })
+
+  res.on('error', () => {
+    console.error(error)
+  })
+})
+
 
 app.get('/', (req, res) => {
   res.send('列出全部 Todo')
